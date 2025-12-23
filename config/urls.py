@@ -15,8 +15,44 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.urls import re_path
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
+...
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Serializer",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+
+)
+
+
+
+from django.urls import path, include
+from configapp.views import ActorAPI, CommitAPI, MovieAPI, CommitApiView, SendEmailApi
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'actor',ActorAPI)
+router.register(r'commit',CommitAPI)
+router.register(r'movie',MovieAPI)
+# router.register(r'sendemail',SendEmailApi)
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('',include(router.urls)),
+    path('commit_post/',CommitApiView.as_view()),
+    path('commit_post/',SendEmailApi.as_view()),
+    # path('category/',CategoryAPi.as_view()),
+    # path('category/<int:pk>/',CategoryDetailAPi.as_view()),
+
 ]
